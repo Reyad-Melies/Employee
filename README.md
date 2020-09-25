@@ -1,12 +1,11 @@
 # **ASP.NET core MVC AEmployee App**
-
+# Resources Videos
+![Index-Employee-App-Opera-2020-09](https://user-images.githubusercontent.com/61639713/94324724-6ce23800-ff9b-11ea-8f4d-d4be1780b9c0.gif)
 # Tech/framework used
 * ASP.NET MVC
 * Entity Framework
 * JQUERY TAGATOR
-# Resources Videos
-![Index-Employee-App-Opera-2020-09](https://user-images.githubusercontent.com/61639713/94324724-6ce23800-ff9b-11ea-8f4d-d4be1780b9c0.gif)
-
+# Resource
 * https://www.youtube.com/playlist?list=PLdo4fOcmZ0oVxKLQCHpiUWun7vlJJvUiN
 * https://dotnet.microsoft.com/learn/dotnet/hello-world-tutorial/intro
 * https://channel9.msdn.com/Series/Entity-Framework-Core-101
