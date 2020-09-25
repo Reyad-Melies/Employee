@@ -13,12 +13,14 @@ namespace Employee.Models
         [Required]
         public string FullName { get; set; }
         public string Email { get; set; }
-
+        [Required]
         [DataType(DataType.Date)]
         public DateTime Birthdate { get; set; }
         [Required]
         public string Gender { get; set; }
-        public virtual ICollection<Vacation> Vacation { get; set; }
+        
+        public VacationCasual VacationCasual { get; set; }
+        public VacationSchedule VacationSchedule { get; set; }
     }
   
 }

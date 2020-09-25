@@ -24,8 +24,8 @@ namespace Employee.Controllers
         {
             return View(await _context.Emp.ToListAsync());
         }
-
-        // GET: Emps/Details/5
+        
+        // GET: Emps/Details/5 get the complete details about the employee
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -39,8 +39,24 @@ namespace Employee.Controllers
             {
                 return NotFound();
             }
+            var empp = await _context.Emp.Include(e => e.VacationCasual).SingleAsync(e => e.Id == id);
+            var emp1 = await _context.Emp.Include(e => e.VacationSchedule).SingleAsync(e => e.Id == id);
 
-            return View(emp);
+            DataFromViewModel dataFromViewModel = new DataFromViewModel
+            {
+                FullName = empp.FullName,
+                SchedualBalance = emp1.VacationSchedule.Balance,
+                SchedualUsed = emp1.VacationSchedule.Used,
+                CasualBalance = empp.VacationCasual.Balance,
+                CasualUsed = empp.VacationCasual.Used,
+                EmpId = empp.VacationCasual.EmpId,
+                Email = empp.Email,
+                Gender = emp.Gender,
+                Birthdate = empp.Birthdate,
+                Id = empp.Id
+            };
+
+            return View(dataFromViewModel);
         }
 
         // GET: Emps/Create
@@ -54,15 +70,17 @@ namespace Employee.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FullName,Email,Birthdate,Gender")] Emp emp)
+        public async Task<IActionResult> Create([Bind("Id,FullName,Email,Birthdate,Gender,CasualBalance,CasualUsed,SchedualBalance,SchedualUsed")] DataFromViewModel dataFromViewModel)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(emp);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(emp);
+            Emp newEmployee = new Emp { FullName = dataFromViewModel.FullName, Email = dataFromViewModel.Email, Gender = dataFromViewModel.Gender, Birthdate = dataFromViewModel.Birthdate };
+
+            VacationCasual VacationCasual = new VacationCasual { Balance = 7, EmpId = newEmployee.Id, Used = 0 };
+            VacationSchedule VacationSchedule = new VacationSchedule { Balance = 14, EmpId = newEmployee.Id, Used = 0 };
+            newEmployee.VacationCasual = VacationCasual;
+            newEmployee.VacationSchedule = VacationSchedule;
+            _context.Add(newEmployee);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Emps/Edit/5
@@ -72,13 +90,27 @@ namespace Employee.Controllers
             {
                 return NotFound();
             }
+            var emp = await _context.Emp.Include(e => e.VacationCasual).SingleAsync(e => e.Id == id);
+            var emp1 = await _context.Emp.Include(e => e.VacationSchedule).SingleAsync(e => e.Id == id);
 
-            var emp = await _context.Emp.FindAsync(id);
+            DataFromViewModel dataFromViewModel = new DataFromViewModel
+            {
+                FullName = emp.FullName,
+                SchedualBalance = emp1.VacationSchedule.Balance,
+                SchedualUsed = emp1.VacationSchedule.Used,
+                CasualBalance = emp.VacationCasual.Balance,
+                CasualUsed = emp.VacationCasual.Used,
+                EmpId = emp.VacationCasual.EmpId,
+                Email = emp.Email,
+                Gender = emp.Gender,
+                Birthdate = emp.Birthdate,
+                Id = emp.Id
+            };
             if (emp == null)
             {
                 return NotFound();
             }
-            return View(emp);
+            return View(dataFromViewModel);
         }
 
         // POST: Emps/Edit/5
@@ -86,34 +118,38 @@ namespace Employee.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FullName,Email,Birthdate,Gender")] Emp emp)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FullName,Email,Birthdate,Gender,CasualBalance,CasualUsed,SchedualBalance,SchedualUsed")] DataFromViewModel dataFromViewModel)
         {
+            Emp emp = new Emp { Id = id, FullName = dataFromViewModel.FullName, Email = dataFromViewModel.Email, Gender = dataFromViewModel.Gender, Birthdate = dataFromViewModel.Birthdate };
+            VacationCasual vacationCasual = new VacationCasual { Id = id, Balance = dataFromViewModel.CasualBalance, EmpId = emp.Id, Used = dataFromViewModel.CasualUsed };
+            VacationSchedule vacationSchedule = new VacationSchedule { Id = id, Balance = dataFromViewModel.SchedualBalance, EmpId = emp.Id, Used = dataFromViewModel.SchedualUsed };
+
+            emp.VacationCasual = vacationCasual;
+            emp.VacationSchedule = vacationSchedule;
             if (id != emp.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+
+            try
             {
-                try
-                {
-                    _context.Update(emp);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!EmpExists(emp.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                _context.Update(emp);
+                await _context.SaveChangesAsync();
             }
-            return View(emp);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!EmpExists(emp.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));
+
         }
 
         // GET: Emps/Delete/5

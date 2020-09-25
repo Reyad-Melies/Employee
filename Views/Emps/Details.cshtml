@@ -1,4 +1,4 @@
-﻿@model Employee.Models.Emp
+﻿@model Employee.Models.DataFromViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -7,33 +7,65 @@
 <h1>Details</h1>
 
 <div>
-    <h4>Emp</h4>
+    <h4>Employee</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Id)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Id)
+        </dd>
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.FullName)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.FullName)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Email)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Email)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Birthdate)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Birthdate)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Gender)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Gender)
         </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CasualBalance)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CasualBalance)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CasualUsed)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CasualUsed)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.SchedualBalance)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.SchedualBalance)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.SchedualUsed)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.SchedualUsed)
+        </dd>
+
     </dl>
 </div>
 <div>
