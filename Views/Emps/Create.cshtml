@@ -1,4 +1,4 @@
-﻿@model Employee.Models.DataFromViewModel
+﻿@model Employee.Models.Emp
 
 @{
     ViewData["Title"] = "Create";
@@ -6,7 +6,7 @@
 
 <h1>Create</h1>
 
-<h4>Employee</h4>
+<h4>Emp</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -32,7 +32,7 @@
                 <input asp-for="Gender" class="form-control" />
                 <span asp-validation-for="Gender" class="text-danger"></span>
             </div>
-                 <div class="form-group">
+            <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>

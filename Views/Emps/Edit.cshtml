@@ -1,4 +1,4 @@
-﻿@model Employee.Models.DataFromViewModel
+﻿@model Employee.Models.Emp
 
 @{
     ViewData["Title"] = "Edit";
@@ -32,26 +32,6 @@
                 <label asp-for="Gender" class="control-label"></label>
                 <input asp-for="Gender" class="form-control" />
                 <span asp-validation-for="Gender" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CasualBalance" class="control-label"></label>
-                <input asp-for="CasualBalance" class="form-control" />
-                <span asp-validation-for="CasualBalance" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CasualUsed" class="control-label"></label>
-                <input asp-for="CasualUsed" class="form-control" />
-                <span asp-validation-for="CasualUsed" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SchedualBalance" class="control-label"></label>
-                <input asp-for="SchedualBalance" class="form-control" />
-                <span asp-validation-for="SchedualBalance" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SchedualUsed" class="control-label"></label>
-                <input asp-for="SchedualUsed" class="form-control" />
-                <span asp-validation-for="SchedualUsed" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

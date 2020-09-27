@@ -13,9 +13,7 @@ namespace Employee.Data
         {
         }
         public DbSet<Emp> Emp { get; set; }
-        public DbSet<VacationSchedule> VacationSchedules { get; set; }
-        public DbSet<VacationCasual> VacationCasuals { get; set; }
-        public DbSet<Employee.Models.All> All { get; set; }
+        public DbSet<Vacation> Vacation { get; set; }
 
     }
 }

@@ -4,10 +4,8 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
-<td>
-    <a asp-action="CreateVacation" asp-route-id="@Model.Id">Create Vacation</a>
-</td>
+<h1>Hello @Model.FullName</h1>
+
 <div>
     <hr />
     <dl class="row">
@@ -45,13 +43,12 @@
     </tr>
     @for (int i = 0; i < Model.Vacations.Count; i++)
     {
-        <tr>
-            <td>@Model.Vacations.ElementAt(i).Type</td>
-            <td>@Model.Vacations.ElementAt(i).Balance</td>
-            <td>@Model.Vacations.ElementAt(i).Used</td>
-            <td><a asp-action="DeleteVacation" asp-route-id="@Model.Vacations.ElementAt(i).Id">Delete</a></td>
-            <td><a asp-action="EditVacation" asp-route-id="@Model.Vacations.ElementAt(i).Id">Edit</a></td>
-        </tr>
+<tr>
+    <td>@Model.Vacations.ElementAt(i).Type</td>
+    <td>@Model.Vacations.ElementAt(i).Balance</td>
+    <td>@Model.Vacations.ElementAt(i).Used</td>
+    <td><a asp-action="Request" asp-route-id="@Model.Vacations.ElementAt(i).Id">Request</a></td>
+</tr>
     }
 </table>
 

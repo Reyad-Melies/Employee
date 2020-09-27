@@ -7,17 +7,18 @@ using System.Threading.Tasks;
 
 namespace Employee.Models
 {
-    public class VacationSchedule
+    public class Vacation
     {
         public int Id { get; set; }
-        [Required]
+
+        
         public int EmpId { get; set; }
-        [DefaultValue(14)]
+      
+        public string Type { get; set; }
+    
         public int Balance { get; set; }
-        [Required]
-        [DefaultValue(0)]
+       
         public int Used { get; set; }
         public Emp Emp { get; set; }
     }
 }
-

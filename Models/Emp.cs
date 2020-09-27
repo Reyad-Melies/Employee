@@ -18,9 +18,8 @@ namespace Employee.Models
         public DateTime Birthdate { get; set; }
         [Required]
         public string Gender { get; set; }
-        
-        public VacationCasual VacationCasual { get; set; }
-        public VacationSchedule VacationSchedule { get; set; }
+
+        public virtual ICollection<Vacation> Vacations { get; set; }
     }
   
 }

@@ -13,50 +13,38 @@ namespace Employee.Controllers
     public class EmpsController : Controller
     {
         private readonly EmployeeContext _context;
-
         public EmpsController(EmployeeContext context)
         {
             _context = context;
         }
-
         // GET: Emps
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(String SearchString)
         {
-            return View(await _context.Emp.ToListAsync());
+
+            var emp = _context.Emp.ToList();
+            if (!String.IsNullOrEmpty(SearchString))
+            {
+                var empp = _context.Emp.Where(s => s.Id == Int32.Parse(SearchString));
+                //  Find(Int32.Parse(SearchString));
+
+                return View(empp);
+            }
+            return View(emp);
         }
-        
-        // GET: Emps/Details/5 get the complete details about the employee
+       
+        // GET: Emps/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-
-            var emp = await _context.Emp
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var emp = await _context.Emp.Include(e => e.Vacations).SingleAsync(e => e.Id == id);
             if (emp == null)
             {
                 return NotFound();
             }
-            var empp = await _context.Emp.Include(e => e.VacationCasual).SingleAsync(e => e.Id == id);
-            var emp1 = await _context.Emp.Include(e => e.VacationSchedule).SingleAsync(e => e.Id == id);
-
-            DataFromViewModel dataFromViewModel = new DataFromViewModel
-            {
-                FullName = empp.FullName,
-                SchedualBalance = emp1.VacationSchedule.Balance,
-                SchedualUsed = emp1.VacationSchedule.Used,
-                CasualBalance = empp.VacationCasual.Balance,
-                CasualUsed = empp.VacationCasual.Used,
-                EmpId = empp.VacationCasual.EmpId,
-                Email = empp.Email,
-                Gender = emp.Gender,
-                Birthdate = empp.Birthdate,
-                Id = empp.Id
-            };
-
-            return View(dataFromViewModel);
+            return View(emp);
         }
 
         // GET: Emps/Create
@@ -70,19 +58,50 @@ namespace Employee.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FullName,Email,Birthdate,Gender,CasualBalance,CasualUsed,SchedualBalance,SchedualUsed")] DataFromViewModel dataFromViewModel)
+        public async Task<IActionResult> Create([Bind("Id,FullName,Email,Birthdate,Gender")] Emp emp)
         {
-            Emp newEmployee = new Emp { FullName = dataFromViewModel.FullName, Email = dataFromViewModel.Email, Gender = dataFromViewModel.Gender, Birthdate = dataFromViewModel.Birthdate };
-
-            VacationCasual VacationCasual = new VacationCasual { Balance = 7, EmpId = newEmployee.Id, Used = 0 };
-            VacationSchedule VacationSchedule = new VacationSchedule { Balance = 14, EmpId = newEmployee.Id, Used = 0 };
-            newEmployee.VacationCasual = VacationCasual;
-            newEmployee.VacationSchedule = VacationSchedule;
-            _context.Add(newEmployee);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if (ModelState.IsValid)
+            {
+                emp.Vacations = new List<Vacation>();
+                Vacation vacationCasual = new Vacation { Balance = 7, EmpId = emp.Id, Used = 0, Type = "Schedual Vacation" };
+                Vacation vacationSchedule = new Vacation { Balance = 14, EmpId = emp.Id, Used = 0, Type = "Casual Vacation" };
+                emp.Vacations.Add(vacationSchedule);
+                emp.Vacations.Add(vacationCasual);
+                _context.Add(emp);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(emp);
+        }
+        public IActionResult CreateVacation(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            return View();
         }
 
+        // POST: Vacations/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateVacation(int id,[Bind("Type,Balance,Used")] Vacation vacation)
+        {     
+            if (ModelState.IsValid)
+            {
+                vacation.EmpId = id;
+                var emp = await _context.Emp.FindAsync(id);
+                emp.Vacations = new List<Vacation>();
+                emp.Vacations.Add(vacation);
+                _context.Add(vacation);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            ViewData["EmpId"] = new SelectList(_context.Emp, "Id", "FullName", vacation.EmpId);
+            return View(vacation);
+        }
         // GET: Emps/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -90,27 +109,14 @@ namespace Employee.Controllers
             {
                 return NotFound();
             }
-            var emp = await _context.Emp.Include(e => e.VacationCasual).SingleAsync(e => e.Id == id);
-            var emp1 = await _context.Emp.Include(e => e.VacationSchedule).SingleAsync(e => e.Id == id);
 
-            DataFromViewModel dataFromViewModel = new DataFromViewModel
-            {
-                FullName = emp.FullName,
-                SchedualBalance = emp1.VacationSchedule.Balance,
-                SchedualUsed = emp1.VacationSchedule.Used,
-                CasualBalance = emp.VacationCasual.Balance,
-                CasualUsed = emp.VacationCasual.Used,
-                EmpId = emp.VacationCasual.EmpId,
-                Email = emp.Email,
-                Gender = emp.Gender,
-                Birthdate = emp.Birthdate,
-                Id = emp.Id
-            };
+            var emp = await _context.Emp.Include(e => e.Vacations).SingleAsync(e => e.Id == id);
+
             if (emp == null)
             {
                 return NotFound();
             }
-            return View(dataFromViewModel);
+            return View(emp);
         }
 
         // POST: Emps/Edit/5
@@ -118,38 +124,34 @@ namespace Employee.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FullName,Email,Birthdate,Gender,CasualBalance,CasualUsed,SchedualBalance,SchedualUsed")] DataFromViewModel dataFromViewModel)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FullName,Email,Birthdate,Gender")] Emp emp)
         {
-            Emp emp = new Emp { Id = id, FullName = dataFromViewModel.FullName, Email = dataFromViewModel.Email, Gender = dataFromViewModel.Gender, Birthdate = dataFromViewModel.Birthdate };
-            VacationCasual vacationCasual = new VacationCasual { Id = id, Balance = dataFromViewModel.CasualBalance, EmpId = emp.Id, Used = dataFromViewModel.CasualUsed };
-            VacationSchedule vacationSchedule = new VacationSchedule { Id = id, Balance = dataFromViewModel.SchedualBalance, EmpId = emp.Id, Used = dataFromViewModel.SchedualUsed };
-
-            emp.VacationCasual = vacationCasual;
-            emp.VacationSchedule = vacationSchedule;
             if (id != emp.Id)
             {
                 return NotFound();
             }
 
-
-            try
+            if (ModelState.IsValid)
             {
-                _context.Update(emp);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!EmpExists(emp.Id))
+                try
                 {
-                    return NotFound();
+                    _context.Update(emp);
+                    await _context.SaveChangesAsync();
                 }
-                else
+                catch (DbUpdateConcurrencyException)
                 {
-                    throw;
+                    if (!EmpExists(emp.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
+                return RedirectToAction(nameof(Index));
             }
-            return RedirectToAction(nameof(Index));
-
+            return View(emp);
         }
 
         // GET: Emps/Delete/5
@@ -174,13 +176,78 @@ namespace Employee.Controllers
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
-        {
+        {   
             var emp = await _context.Emp.FindAsync(id);
             _context.Emp.Remove(emp);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
+        // GET: Emps/Delete/5
+        public async Task<IActionResult> DeleteVacation(int? id)
+        {
+
+            var vacation = await _context.Vacation
+                .Include(v => v.Emp)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            return View(vacation);
+        }
+
+        // POST: Emps/Delete/5
+        [HttpPost, ActionName("DeleteVacation")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteVacationConfirmed(int id)
+        {  
+            var vacation = await _context.Vacation.FindAsync(id);
+            int? x = vacation.EmpId;
+             _context.Vacation.Remove(vacation);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+        // GET: Vacations/Edit/5
+        public async Task<IActionResult> EditVacation(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            
+                var vacation = await _context.Vacation.FindAsync(id);
+            if (vacation == null)
+            {
+                return NotFound();
+            }
+             return View(vacation);
+        }
+
+        // POST: Vacations/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditVacation(int id, [Bind("Id,Type,Balance,Used")] Vacation vacation)
+        {   
+            if (id != vacation.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+
+                var va = await _context.Vacation.FindAsync(id);
+                var emp= await _context.Emp.FindAsync(va.EmpId);
+                emp.Vacations = new List<Vacation>();
+                   emp.Vacations.Add(vacation);
+
+                _context.Update(emp);
+                    await _context.SaveChangesAsync();
+                //   return View();
+                return RedirectToAction(nameof(Index));
+            }
+            ViewData["EmpId"] = new SelectList(_context.Emp, "Id", "FullName", vacation.EmpId);
+            return View(vacation);
+        }
         private bool EmpExists(int id)
         {
             return _context.Emp.Any(e => e.Id == id);

@@ -1,49 +1,60 @@
-﻿@model IEnumerable<Employee.Models.All>
+﻿@model IEnumerable<Employee.Models.Emp>
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Hello Employee 
-    
-    </h1>
-
-
+<h1>Hello Employee</h1>
 <form asp-controller="Home" asp-action="Index">
     <p>
         Employee Id: <input type="text" name="SearchString">
         <input type="submit" value="Filter" />
     </p>
 </form>
-<table class="table table-striped">
-    <tr>
-        <td>Employee ID</td>
-        <td>Name</td>
-        <td>Email</td>
-        <td>Gender</td>
-        <td>Birthdate</td>
-        <td>Casual Vacation Balance</td>
-        <td>Casual Vacation Used</td>
-        <td>Schedule Vacation Balance</td>
-        <td>Schedule Vacation Used</td>
-    </tr>
-    @foreach (var item in Model)
-    {
-<tr>
-    <td>@item.Empp.Id</td>
-    <td>@item.Empp.FullName</td>
-    <td>@item.Empp.Email</td>
-    <td>@item.Empp.Gender</td>
-    <td>
-        @Html.DisplayFor(modelItem => item.Empp.Birthdate)
-    </td>
-    <td>@item.VacationCasual.Balance</td>
-    <td>@item.VacationCasual.Used</td>
-    <td>@item.VacationSchedule.Balance</td>
-    <td>@item.VacationSchedule.Used</td>
-    <td> <button name="secduleVacation" type="submit" class="btn btn-danger">secduleVacation</button></td>
-    <td> <button name="casualVacation" type="submit" class="btn btn-danger">CasualVacation</button></td>
-</tr>
-    }
-
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FullName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Birthdate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Gender)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FullName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Birthdate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Gender)
+            </td>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+            </td>
+        </tr>
+        }
+    </tbody>
 </table>
