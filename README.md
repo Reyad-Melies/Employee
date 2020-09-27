@@ -1,5 +1,5 @@
 # **ASP.NET core MVC AEmployee App**
-![Index-Employee-App-Opera-2020-09](https://user-images.githubusercontent.com/61639713/94324724-6ce23800-ff9b-11ea-8f4d-d4be1780b9c0.gif)
+![final-isa](https://user-images.githubusercontent.com/61639713/94378705-d2652e80-012b-11eb-93b1-b7e6a517e39a.gif)
 # Tech/framework used
 * ASP.NET MVC
 * Entity Framework
