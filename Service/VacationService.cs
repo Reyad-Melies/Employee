@@ -44,6 +44,16 @@ namespace Employee.Service
             _vacationRepository.DeleteVacation(vacation);
             await _vacationRepository.SaveAsync();
         }
+        public async Task RequestVacation(int id)
+        {
+            var vacation = await _vacationRepository.GetVacation((int)id);
+            var emp = await _empRepository.GetEmp(vacation.EmpId);
+            vacation.Used += 1;
+            emp.Vacations = new List<Vacation>();
+            emp.Vacations.Add(vacation);
+            _empRepository.UpdateEmployee(emp);
+            await _empRepository.SaveAsync();
+        }
 
     }
 }
