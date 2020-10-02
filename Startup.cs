@@ -11,6 +11,7 @@ using Microsoft.Extensions.Hosting;
 using Employee.Data;
 using Microsoft.EntityFrameworkCore;
 using Employee.Repository;
+using Employee.Service;
 
 namespace Employee
 {
@@ -29,6 +30,8 @@ namespace Employee
 
             services.AddScoped<IEmpRepository, EmpRepository>();
             services.AddScoped<IVacationRepository, VacationRepository>();
+            services.AddScoped<EmployeeService, EmployeeService>();
+            services.AddScoped<VacationService, VacationService>();
             services.AddControllersWithViews();
             services.AddDbContext<EmployeeContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("EmployeeContext")));
