@@ -8,26 +8,27 @@ using Microsoft.Extensions.Logging;
 using Employee.Models;
 using Employee.Data;
 using Microsoft.EntityFrameworkCore;
-
+using Employee.Repository;
 namespace WebApplication1.Controllers
 {
     public class HomeController : Controller
     {
-
-        private readonly EmployeeContext _context;
-        public HomeController(EmployeeContext context)
+        private readonly IEmpRepository _empRepository;
+        private readonly IVacationRepository _vacationRepository;
+       // private readonly EmployeeContext _context;
+        public HomeController(EmployeeContext context, IVacationRepository vacationRepository, IEmpRepository empRepository)
         {
-            _context = context;
+            _empRepository = empRepository;
+            _vacationRepository = vacationRepository;
+            //      _context = context;
         }
         public IActionResult Index(String SearchString)
         {
-            var emp = _context.Emp.ToList() ;
-            if (!String.IsNullOrEmpty(SearchString))
+          if (!String.IsNullOrEmpty(SearchString))
             {
-                var empp =  _context.Emp.Where(s => s.Id==Int32.Parse(SearchString));
-                return View(empp);
+                return View(_empRepository.GetEmployee(Int32.Parse(SearchString)));
             }
-            return View(emp);
+            return View(_empRepository.GetEmps());
             
         }
         public async Task<IActionResult> Details(int? id)
@@ -36,7 +37,8 @@ namespace WebApplication1.Controllers
             {
                 return NotFound();
             }
-            var emp = await _context.Emp.Include(e => e.Vacations).SingleAsync(e => e.Id == id);
+            var emp = await _empRepository.GetEmployeeWithVacation((int)id);
+          //  await _context.Emp.Include(e => e.Vacations).SingleAsync(e => e.Id == id);
             if (emp == null)
             {
                 return NotFound();
@@ -51,8 +53,10 @@ namespace WebApplication1.Controllers
                 return NotFound();
             }
 
-            var vacation = await _context.Vacation.FindAsync(id);
-            var emp = await _context.Emp.FindAsync(vacation.EmpId);
+            var vacation = await _vacationRepository.GetVacation((int)id);
+            //await _context.Vacation.FindAsync(id);
+            var emp = await _empRepository.GetEmp(vacation.EmpId);
+              //  await _context.Emp.FindAsync(vacation.EmpId);
             if (vacation == null||emp==null)
             {
                 return NotFound();
@@ -60,8 +64,10 @@ namespace WebApplication1.Controllers
             vacation.Used += 1;
             emp.Vacations = new List<Vacation>();
             emp.Vacations.Add(vacation);
-            _context.Update(emp);
-            await _context.SaveChangesAsync();
+            _empRepository.UpdateEmployee(emp);
+            //_context.Update(emp);
+            await _empRepository.SaveAsync();
+            //await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
         public IActionResult Privacy()

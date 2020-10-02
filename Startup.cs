@@ -10,6 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Employee.Data;
 using Microsoft.EntityFrameworkCore;
+using Employee.Repository;
+
 namespace Employee
 {
     public class Startup
@@ -24,10 +26,13 @@ namespace Employee
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.AddScoped<IEmpRepository, EmpRepository>();
+            services.AddScoped<IVacationRepository, VacationRepository>();
             services.AddControllersWithViews();
             services.AddDbContext<EmployeeContext>(options =>
-           options.UseSqlServer(Configuration.GetConnectionString("EmployeeContext")));
-
+            options.UseSqlServer(Configuration.GetConnectionString("EmployeeContext")));
+         
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

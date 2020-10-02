@@ -7,29 +7,31 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Employee.Data;
 using Employee.Models;
+using Employee.Repository;
+using System.Threading;
 
 namespace Employee.Controllers
 {
     public class EmpsController : Controller
     {
-        private readonly EmployeeContext _context;
-        public EmpsController(EmployeeContext context)
+        private readonly IEmpRepository _empRepository;
+        private readonly IVacationRepository _vacationRepository;
+   //     private readonly EmployeeContext _context;
+        public EmpsController(EmployeeContext context,IVacationRepository vacationRepository,IEmpRepository empRepository)
         {
-            _context = context;
+            _empRepository = empRepository;
+            _vacationRepository = vacationRepository;
+     //       _context = context;
         }
         // GET: Emps
         public async Task<IActionResult> Index(String SearchString)
         {
 
-            var emp = _context.Emp.ToList();
             if (!String.IsNullOrEmpty(SearchString))
             {
-                var empp = _context.Emp.Where(s => s.Id == Int32.Parse(SearchString));
-                //  Find(Int32.Parse(SearchString));
-
-                return View(empp);
+                return View(_empRepository.GetEmployee(Int32.Parse(SearchString)));
             }
-            return View(emp);
+            return View(_empRepository.GetEmps());
         }
        
         // GET: Emps/Details/5
@@ -39,7 +41,8 @@ namespace Employee.Controllers
             {
                 return NotFound();
             }
-            var emp = await _context.Emp.Include(e => e.Vacations).SingleAsync(e => e.Id == id);
+             var emp = await _empRepository.GetEmployeeWithVacation((int)id);
+                //_context.Emp.Include(e => e.Vacations).SingleAsync(e => e.Id == id);
             if (emp == null)
             {
                 return NotFound();
@@ -62,13 +65,16 @@ namespace Employee.Controllers
         {
             if (ModelState.IsValid)
             {
-                emp.Vacations = new List<Vacation>();
+                _empRepository.CreateEmployee(emp);
+                await _empRepository.SaveAsync();
+    
+               /* emp.Vacations = new List<Vacation>();
                 Vacation vacationCasual = new Vacation { Balance = 7, EmpId = emp.Id, Used = 0, Type = "Schedual Vacation" };
                 Vacation vacationSchedule = new Vacation { Balance = 14, EmpId = emp.Id, Used = 0, Type = "Casual Vacation" };
                 emp.Vacations.Add(vacationSchedule);
                 emp.Vacations.Add(vacationCasual);
-                _context.Add(emp);
-                await _context.SaveChangesAsync();
+                _context.Add(emp);*/
+             //   await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(emp);
@@ -92,14 +98,18 @@ namespace Employee.Controllers
             if (ModelState.IsValid)
             {
                 vacation.EmpId = id;
-                var emp = await _context.Emp.FindAsync(id);
+                _vacationRepository.Create(vacation);
+                
+                /*var emp = await _context.Emp.FindAsync(id);
                 emp.Vacations = new List<Vacation>();
                 emp.Vacations.Add(vacation);
-                _context.Add(vacation);
-                await _context.SaveChangesAsync();
+                _context.Add(vacation);*/
+             //  // _vacationRepository.Create(vacation,id);
+                // await _context.SaveChangesAsync();
+                await _vacationRepository.SaveAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["EmpId"] = new SelectList(_context.Emp, "Id", "FullName", vacation.EmpId);
+      //      ViewData["EmpId"] = new SelectList(_context.Emp, "Id", "FullName", vacation.EmpId);
             return View(vacation);
         }
         // GET: Emps/Edit/5
@@ -110,7 +120,8 @@ namespace Employee.Controllers
                 return NotFound();
             }
 
-            var emp = await _context.Emp.Include(e => e.Vacations).SingleAsync(e => e.Id == id);
+            var emp =await _empRepository.GetEmployeeWithVacation((int)id);
+                //await _context.Emp.Include(e => e.Vacations).SingleAsync(e => e.Id == id);
 
             if (emp == null)
             {
@@ -135,11 +146,13 @@ namespace Employee.Controllers
             {
                 try
                 {
-                    _context.Update(emp);
-                    await _context.SaveChangesAsync();
+                    _empRepository.UpdateEmployee(emp);
+                    await _empRepository.SaveAsync();
+                  //  _context.Update(emp);
+                  //  await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
-                {
+                {/*
                     if (!EmpExists(emp.Id))
                     {
                         return NotFound();
@@ -147,7 +160,7 @@ namespace Employee.Controllers
                     else
                     {
                         throw;
-                    }
+                    }*/
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -162,8 +175,8 @@ namespace Employee.Controllers
                 return NotFound();
             }
 
-            var emp = await _context.Emp
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var emp = await _empRepository.GetEmp((int)id);
+              //  await _context.Emp.FirstOrDefaultAsync(m => m.Id == id);
             if (emp == null)
             {
                 return NotFound();
@@ -176,10 +189,15 @@ namespace Employee.Controllers
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
-        {   
-            var emp = await _context.Emp.FindAsync(id);
-            _context.Emp.Remove(emp);
-            await _context.SaveChangesAsync();
+        {
+            var emp = await _empRepository.GetEmp((int)id);
+            if (emp == null) return NotFound();
+                
+            // await _context.Emp.FindAsync(id);
+            _empRepository.DeleteEmployee(emp);
+            // _context.Emp.Remove(emp);
+            await _empRepository.SaveAsync();
+            //await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
@@ -187,9 +205,9 @@ namespace Employee.Controllers
         public async Task<IActionResult> DeleteVacation(int? id)
         {
 
-            var vacation = await _context.Vacation
-                .Include(v => v.Emp)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var vacation = await _vacationRepository.GetVacation((int)id); 
+                //await _context.Vacation.Include(v => v.Emp).FirstOrDefaultAsync(m => m.Id == id);
+            
             return View(vacation);
         }
 
@@ -198,10 +216,12 @@ namespace Employee.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteVacationConfirmed(int id)
         {  
-            var vacation = await _context.Vacation.FindAsync(id);
-            int? x = vacation.EmpId;
-             _context.Vacation.Remove(vacation);
-            await _context.SaveChangesAsync();
+            var vacation = await _vacationRepository.GetVacation(id);
+            //await _context.Vacation.FindAsync(id);
+            _vacationRepository.DeleteVacation(vacation);
+            // _context.Vacation.Remove(vacation);
+            await _vacationRepository.SaveAsync();
+            //await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
         // GET: Vacations/Edit/5
@@ -211,8 +231,9 @@ namespace Employee.Controllers
             {
                 return NotFound();
             }
-            
-                var vacation = await _context.Vacation.FindAsync(id);
+
+            var vacation =await _vacationRepository.GetVacation((int)id);
+                //await _context.Vacation.FindAsync(id);
             if (vacation == null)
             {
                 return NotFound();
@@ -234,23 +255,20 @@ namespace Employee.Controllers
 
             if (ModelState.IsValid)
             {
-
-                var va = await _context.Vacation.FindAsync(id);
-                var emp= await _context.Emp.FindAsync(va.EmpId);
+                var vac=await _vacationRepository.GetVacation(id);
+                var emp =await _empRepository.GetEmp(vac.EmpId);
                 emp.Vacations = new List<Vacation>();
-                   emp.Vacations.Add(vacation);
-
-                _context.Update(emp);
-                    await _context.SaveChangesAsync();
-                //   return View();
+                emp.Vacations.Add(vacation);
+                _empRepository.UpdateEmployee(emp);
+                await _empRepository.SaveAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["EmpId"] = new SelectList(_context.Emp, "Id", "FullName", vacation.EmpId);
+        //    ViewData["EmpId"] = new SelectList(_context.Emp, "Id", "FullName", vacation.EmpId);
             return View(vacation);
         }
-        private bool EmpExists(int id)
+       /* private bool EmpExists(int id)
         {
             return _context.Emp.Any(e => e.Id == id);
-        }
+        }*/
     }
 }
