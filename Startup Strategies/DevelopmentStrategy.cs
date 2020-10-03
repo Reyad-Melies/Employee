@@ -1,8 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
-using Employee.Data;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
+﻿using Employee.Data;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Employee.StartupStrategies
 {
@@ -20,7 +20,7 @@ namespace Employee.StartupStrategies
             services.AddDbContext<EmployeeContext>(options =>
             {
                 var connectionString = Configuration.GetConnectionString("DefaultConnection");
-            options.UseSqlServer(connectionString);
+                options.UseSqlServer(connectionString);
             });
         }
 

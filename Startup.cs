@@ -1,19 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Employee.Startup_Strategies;
+using Employee.StartupStrategies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Employee.Data;
-using Microsoft.EntityFrameworkCore;
-using Employee.Repository;
-using Employee.Service;
-using Employee.StartupStrategies;
-using Employee.Startup_Strategies;
 
 namespace Employee
 {

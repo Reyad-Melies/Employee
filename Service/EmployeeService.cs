@@ -1,9 +1,7 @@
 ﻿using Employee.Data;
 using Employee.Models;
 using Employee.Repository;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Employee.Service
@@ -50,7 +48,7 @@ namespace Employee.Service
             var emp = await _empRepository.GetEmp((int)id);
             _empRepository.DeleteEmployee(emp);
             await _empRepository.SaveAsync();
-            
+
         }
 
 

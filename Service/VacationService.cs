@@ -1,9 +1,7 @@
 ﻿using Employee.Data;
 using Employee.Models;
 using Employee.Repository;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Employee.Service
@@ -29,7 +27,7 @@ namespace Employee.Service
             _vacationRepository.Create(vacation);
             await _vacationRepository.SaveAsync();
         }
-        public async Task EditVacation(Vacation vacation,int id)
+        public async Task EditVacation(Vacation vacation, int id)
         {
             var vac = await _vacationRepository.GetVacation(id);
             var emp = await _empRepository.GetEmp(vac.EmpId);

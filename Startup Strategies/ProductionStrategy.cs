@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
-using Employee.Data;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
+﻿using Employee.Data;
 using Employee.StartupStrategies;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EmployeesInformationManager.Startup_Strategies
 {

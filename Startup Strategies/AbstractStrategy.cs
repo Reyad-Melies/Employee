@@ -1,13 +1,12 @@
 ﻿using Employee.Repository;
 using Employee.Service;
-using Employee.StartupStrategies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Employee.StartupStrategies
 {
-    public abstract class AbstractStrategy :  IStartupStrategy
+    public abstract class AbstractStrategy : IStartupStrategy
     {
 
         protected IConfiguration Configuration { get; }
@@ -45,5 +44,7 @@ namespace Employee.StartupStrategies
                       pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
+
+
     }
 }
