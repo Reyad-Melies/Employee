@@ -1,0 +1,13 @@
+C:\Users\Reyad\source\repos\Model\bin\Debug\netcoreapp3.1\Model.exe
+C:\Users\Reyad\source\repos\Model\bin\Debug\netcoreapp3.1\Model.deps.json
+C:\Users\Reyad\source\repos\Model\bin\Debug\netcoreapp3.1\Model.runtimeconfig.json
+C:\Users\Reyad\source\repos\Model\bin\Debug\netcoreapp3.1\Model.runtimeconfig.dev.json
+C:\Users\Reyad\source\repos\Model\bin\Debug\netcoreapp3.1\Model.dll
+C:\Users\Reyad\source\repos\Model\bin\Debug\netcoreapp3.1\Model.pdb
+C:\Users\Reyad\source\repos\Model\obj\Debug\netcoreapp3.1\Model.csprojAssemblyReference.cache
+C:\Users\Reyad\source\repos\Model\obj\Debug\netcoreapp3.1\Model.AssemblyInfoInputs.cache
+C:\Users\Reyad\source\repos\Model\obj\Debug\netcoreapp3.1\Model.AssemblyInfo.cs
+C:\Users\Reyad\source\repos\Model\obj\Debug\netcoreapp3.1\Model.csproj.CoreCompileInputs.cache
+C:\Users\Reyad\source\repos\Model\obj\Debug\netcoreapp3.1\Model.dll
+C:\Users\Reyad\source\repos\Model\obj\Debug\netcoreapp3.1\Model.pdb
+C:\Users\Reyad\source\repos\Model\obj\Debug\netcoreapp3.1\Model.genruntimeconfig.cache
