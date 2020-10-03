@@ -19,7 +19,7 @@ namespace Employee.StartupStrategies
             ConfigureCommonServices(services);
             services.AddDbContext<EmployeeContext>(options =>
             {
-                var connectionString = Configuration.GetConnectionString("EmployeeContext");
+                var connectionString = Configuration.GetConnectionString("DefaultConnection");
             options.UseSqlServer(connectionString);
             });
         }
